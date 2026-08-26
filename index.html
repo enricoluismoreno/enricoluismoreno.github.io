@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Portfolio — Mechanical Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --bg2: #f4f3ef;
+      --surface: #ffffff;
+      --border: #e8e6e0;
+      --border2: #d0cdc4;
+      --ink: #1a1916;
+      --ink2: #6b6860;
+      --ink3: #a8a59e;
+      --blue: #2a5cff;
+      --blue-light: #eef1ff;
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Outfit', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.6; overflow-x: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3.5rem; height: 64px;
+      background: rgba(250,250,248,0.93); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { font-family: var(--serif); font-size: 1.25rem; font-weight: 600; color: var(--ink); cursor: pointer; }
+    .nav-logo span { color: var(--blue); }
+    .nav-links { display: flex; list-style: none; }
+    .nav-links a {
+      display: block; padding: 0.5rem 1.1rem;
+      font-size: 0.78rem; font-weight: 400; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--ink2); cursor: pointer; transition: color 0.2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -1px; left: 1.1rem; right: 1.1rem;
+      height: 2px; background: var(--ink); transform: scaleX(0); transition: transform 0.25s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-links a.active { color: var(--ink); }
+    .nav-links a.active::after { transform: scaleX(1); }
+
+    /* ── PAGES ── */
+    .page { display: none; min-height: 100vh; padding-top: 64px; }
+    .page.active { display: block; animation: fadeUp 0.4s ease both; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── BIO ── */
+    .bio-hero {
+      display: grid; grid-template-columns: 1fr 400px;
+      min-height: calc(100vh - 64px); border-bottom: 1px solid var(--border);
+    }
+    .bio-left {
+      padding: 6rem 5rem 5rem; display: flex; flex-direction: column; justify-content: center;
+      border-right: 1px solid var(--border);
+    }
+    .bio-eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); margin-bottom: 1.8rem; }
+    .bio-name { font-family: var(--serif); font-size: clamp(3.5rem,6vw,6.5rem); font-weight: 300; line-height: 1.0; letter-spacing: -0.01em; margin-bottom: 2rem; }
+    .bio-name strong { font-weight: 600; display: block; }
+    .bio-desc { font-size: 1rem; color: var(--ink2); max-width: 44ch; line-height: 1.85; margin-bottom: 3rem; }
+    .bio-ctas { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.7rem 1.6rem; font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; border: 1.5px solid;
+    }
+    .btn-dark { background: var(--ink); color: white; border-color: var(--ink); }
+    .btn-dark:hover { background: transparent; color: var(--ink); }
+    .btn-outline { background: transparent; color: var(--ink); border-color: var(--border2); }
+    .btn-outline:hover { border-color: var(--ink); }
+
+    .bio-right { background: var(--bg2); display: flex; flex-direction: column; overflow: hidden; }
+    .bio-photo-placeholder {
+      flex: 1; min-height: 360px;
+      background: linear-gradient(160deg, #e8e6e0 0%, #d4d1c8 100%);
+      display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;
+    }
+    .bio-photo-placeholder img { width:100%; height:100%; object-fit:cover; position:absolute; inset:0; }
+    .photo-hint { text-align: center; color: var(--ink3); position: relative; z-index: 1; }
+    .photo-hint .icon { font-size: 2.5rem; margin-bottom: 0.5rem; display: block; }
+    .photo-hint p { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .bio-sidebar-info { padding: 2rem 2.5rem; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 1.2rem; }
+    .info-row { display: flex; align-items: baseline; gap: 1rem; font-size: 0.82rem; }
+    .info-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); min-width: 80px; }
+    .info-value { color: var(--ink2); }
+
+    .bio-skills-section { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
+    .skill-block { background: var(--surface); padding: 2.8rem 2.5rem; }
+    .skill-block-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; }
+    .skill-block-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; margin-bottom: 0.8rem; }
+    .skill-block p { font-size: 0.82rem; color: var(--ink2); line-height: 1.8; }
+
+    /* ── PROJECT LIST PAGES ── */
+    .proj-header {
+      padding: 4rem 5rem 3.5rem; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-end; justify-content: space-between;
+    }
+    .proj-eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.8rem; }
+    .proj-title { font-family: var(--serif); font-size: clamp(2.8rem,4vw,4.5rem); font-weight: 300; line-height: 1.05; }
+    .proj-title strong { font-weight: 600; }
+
+    .project-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border-top: 1px solid var(--border); }
+
+    .project-card {
+      background: var(--surface); display: grid; grid-template-columns: 300px 1fr;
+      cursor: pointer; transition: box-shadow 0.3s; overflow: hidden;
+    }
+    .project-card:hover { box-shadow: 0 8px 48px rgba(0,0,0,0.09); z-index: 1; position: relative; }
+    .project-card.reverse { direction: rtl; }
+    .project-card.reverse > * { direction: ltr; }
+
+    .card-img { overflow: hidden; position: relative; min-height: 240px; background: var(--bg2); }
+    .card-img img { width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.5s; }
+    .project-card:hover .card-img img { transform: scale(1.06); }
+    .card-img-ph {
+      width:100%; height:100%; min-height:240px;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.6rem;
+      color: var(--ink3); position:relative; overflow:hidden;
+      background: linear-gradient(135deg, var(--bg2) 0%, var(--border) 100%);
+    }
+    .card-img-ph::before {
+      content:''; position:absolute; inset:0;
+      background-image: linear-gradient(var(--border) 1px,transparent 1px), linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size: 24px 24px; opacity:0.7;
+    }
+    .ph-icon { font-size:1.8rem; position:relative; z-index:1; }
+    .ph-text { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; position:relative; z-index:1; }
+
+    .card-body { padding: 2.4rem 3rem; display: flex; flex-direction: column; justify-content: center; }
+    .card-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.8rem; }
+    .card-title { font-family: var(--serif); font-size: 1.7rem; font-weight: 600; line-height: 1.2; margin-bottom: 0.7rem; }
+    .card-desc { font-size: 0.83rem; color: var(--ink2); line-height: 1.85; margin-bottom: 1.2rem; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.4rem; }
+    .tag { font-size: 0.63rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.25rem 0.7rem; border: 1px solid var(--border2); color: var(--ink2); background: var(--bg); }
+    .tag.blue { border-color: #bfceff; color: var(--blue); background: var(--blue-light); }
+    .card-cta {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.73rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink); border-bottom: 1px solid var(--ink); padding-bottom: 0.1rem;
+      width: fit-content; transition: color 0.2s, border-color 0.2s;
+    }
+    .project-card:hover .card-cta { color: var(--blue); border-color: var(--blue); }
+
+    /* ── DETAIL PAGE ── */
+    .detail-back {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--ink2); cursor: pointer; padding: 1.4rem 5rem;
+      border-bottom: 1px solid var(--border); transition: color 0.2s;
+      width: 100%;
+    }
+    .detail-back:hover { color: var(--blue); }
+
+    .detail-hero {
+      display: grid; grid-template-columns: 1fr 380px;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-hero-left { padding: 4rem 5rem; border-right: 1px solid var(--border); }
+    .detail-category { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); margin-bottom: 1rem; }
+    .detail-title { font-family: var(--serif); font-size: clamp(2rem,4vw,3.5rem); font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem; }
+    .detail-title strong { font-weight: 600; }
+    .detail-body { font-size: 0.9rem; color: var(--ink2); line-height: 2; margin-bottom: 2rem; }
+    .detail-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+    .detail-hero-right { padding: 3.5rem 3rem; background: var(--bg2); display: flex; flex-direction: column; gap: 0; }
+    .detail-meta-block { padding: 1.4rem 0; border-bottom: 1px solid var(--border); }
+    .detail-meta-block:first-child { padding-top: 0; }
+    .detail-meta-label { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); margin-bottom: 0.4rem; }
+    .detail-meta-value { font-size: 0.88rem; color: var(--ink); line-height: 1.6; }
+
+    /* ── CAROUSEL ── */
+    .carousel-section { padding: 3.5rem 5rem 4rem; border-bottom: 1px solid var(--border); }
+    .carousel-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink3); margin-bottom: 1.5rem; }
+    .carousel-wrap { position: relative; overflow: hidden; background: var(--bg2); border: 1px solid var(--border); }
+    .carousel-track { display: flex; transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .carousel-slide {
+      min-width: 100%; height: 500px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; background: var(--bg2);
+    }
+    .carousel-slide img { width:100%; height:100%; object-fit:contain; display:block; }
+    .carousel-slide-ph {
+      width:100%; height:100%;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;
+      color: var(--ink3); position: relative;
+    }
+    .carousel-slide-ph::before {
+      content:''; position:absolute; inset:0;
+      background-image: linear-gradient(var(--border) 1px,transparent 1px), linear-gradient(90deg,var(--border) 1px,transparent 1px);
+      background-size: 40px 40px; opacity:0.5;
+    }
+    .cph-icon { font-size:3rem; position:relative; z-index:1; }
+    .cph-num { font-family: var(--serif); font-size:1.1rem; color: var(--ink3); position:relative; z-index:1; }
+    .cph-text { font-size:0.7rem; letter-spacing:0.14em; text-transform:uppercase; position:relative; z-index:1; }
+
+    .carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      width: 46px; height: 46px; background: white; border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.1rem; color: var(--ink);
+      transition: background 0.2s, color 0.2s; z-index: 10;
+      box-shadow: 0 2px 14px rgba(0,0,0,0.08);
+    }
+    .carousel-btn:hover { background: var(--ink); color: white; }
+    .carousel-prev { left: 1.2rem; }
+    .carousel-next { right: 1.2rem; }
+
+    .carousel-dots { display: flex; justify-content: center; gap: 0.6rem; margin-top: 1.2rem; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border2); cursor: pointer; transition: background 0.2s, transform 0.2s; }
+    .dot.active { background: var(--ink); transform: scale(1.3); }
+
+    .add-image-hint {
+      margin-top: 1.2rem; padding: 1rem 1.4rem;
+      background: var(--blue-light); border: 1px dashed #bfceff;
+      font-size: 0.78rem; color: var(--blue); line-height: 1.8;
+    }
+    .add-image-hint code { font-family: monospace; background: rgba(42,92,255,0.1); padding: 0.1rem 0.4rem; }
+
+    /* ── CONTACT ── */
+    .contact-layout { display: grid; grid-template-columns: 360px 1fr; min-height: calc(100vh - 64px); }
+    .contact-left { background: var(--ink); color: white; padding: 5rem 3rem; display: flex; flex-direction: column; }
+    .contact-left-eyebrow { font-size: 0.72rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 1.2rem; }
+    .contact-left-title { font-family: var(--serif); font-size: 3rem; font-weight: 300; line-height: 1.1; margin-bottom: 3rem; color: white; }
+    .contact-left-title strong { font-weight: 600; display: block; }
+    .contact-detail { padding: 1.4rem 0; border-top: 1px solid rgba(255,255,255,0.1); }
+    .contact-detail:last-of-type { border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .contact-detail-label { font-size: 0.62rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 0.35rem; }
+    .contact-detail-value { font-size: 0.88rem; color: rgba(255,255,255,0.75); }
+    .contact-detail-value a { color: rgba(255,255,255,0.9); text-decoration: none; }
+    .contact-detail-value a:hover { color: white; }
+
+    .contact-right { padding: 5rem 4.5rem; display: flex; flex-direction: column; justify-content: center; }
+    .form-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 400; color: var(--ink2); margin-bottom: 2.5rem; line-height: 1.6; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem 1.5rem; }
+    .form-row { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-row.full { grid-column: 1/-1; }
+    .form-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink3); }
+    .form-input, .form-textarea {
+      background: var(--bg2); border: 1px solid var(--border); border-bottom: 2px solid var(--border2);
+      color: var(--ink); font-family: var(--sans); font-size: 0.88rem; font-weight: 300;
+      padding: 0.8rem 1rem; outline: none; resize: none; transition: border-color 0.2s, background 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus { background: white; border-bottom-color: var(--ink); }
+    .form-textarea { height: 130px; }
+    .form-submit {
+      margin-top: 1.5rem; padding: 0.9rem 2.5rem; background: var(--ink); color: white;
+      border: 1.5px solid var(--ink); font-family: var(--sans); font-size: 0.78rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; align-self: flex-start;
+    }
+    .form-submit:hover { background: transparent; color: var(--ink); }
+
+    /* ── FOOTER ── */
+    footer { padding: 1.8rem 5rem; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--ink3); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      nav { padding: 0 1.2rem; }
+      .nav-links a { padding: 0.5rem 0.55rem; font-size: 0.68rem; }
+      .bio-hero, .detail-hero { grid-template-columns: 1fr; }
+      .bio-right { display: none; }
+      .detail-hero-right { border-top: 1px solid var(--border); }
+      .bio-left { padding: 3.5rem 2rem 3rem; border-right: none; }
+      .bio-skills-section { grid-template-columns: 1fr; }
+      .proj-header { padding: 3rem 2rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .project-card, .project-card.reverse { grid-template-columns: 1fr; direction: ltr; }
+      .card-img { min-height: 220px; }
+      .card-body { padding: 2rem; }
+      .detail-back { padding: 1.2rem 2rem; }
+      .detail-hero-left { padding: 3rem 2rem; }
+      .detail-hero-right { padding: 2rem; }
+      .carousel-section { padding: 2.5rem 2rem 3rem; }
+      .carousel-slide { height: 260px; }
+      .contact-layout { grid-template-columns: 1fr; }
+      .contact-left, .contact-right { padding: 3rem 2rem; }
+      .form-grid { grid-template-columns: 1fr; }
+      footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.4rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo" onclick="showPage('bio')">Enrico Luis <span>.</span>Moreno</span>
+  <ul class="nav-links">
+    <li><a onclick="showPage('bio')"       id="nav-bio"       class="active">Bio</a></li>
+    <li><a onclick="showPage('aerospace')" id="nav-aerospace">Aerospace</a></li>
+    <li><a onclick="showPage('robotics')"  id="nav-robotics">Robotics</a></li>
+    <li><a onclick="showPage('misc')"      id="nav-misc">Misc</a></li>
+    <li><a onclick="showPage('contact')"   id="nav-contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══ BIO ══ -->
+<section id="bio" class="page active">
+  <div class="bio-hero">
+    <div class="bio-left">
+      <div class="bio-eyebrow">Mechanical Engineer</div>
+      <h1 class="bio-Moreno">Enrico Luis  <strong>Moreno</strong></h1>
+      <p class="bio-desc">Mechanical engineer focused on aerospace systems and autonomous robotics. I work at the intersection of structural design, simulation, and intelligent machines — from eVTOL environments to battlebots.</p>
+      <div class="bio-ctas">
+        <button class="btn btn-dark" onclick="showPage('aerospace')">View Projects →</button>
+        <button class="btn btn-outline" onclick="showPage('contact')">Contact Me</button>
+      </div>
+    </div>
+    <div class="bio-right">
+      <div class="bio-photo-placeholder">
+        <!-- Add Enrico Luis  photo: remove the div below and add <img src="photo.jpg" alt="Enrico Luis Moreno"> -->
+        <div class="photo-hint"><span class="icon">🖼</span><p>Enrico Luis  Photo Here</p></div>
+      </div>
+      <div class="bio-sidebar-info">
+        <div class="info-row"><span class="info-label">Based in</span><span class="info-value">Enrico Luis  Location</span></div>
+        <div class="info-row"><span class="info-label">Degree</span><span class="info-value">Mechanical Engineering</span></div>
+        <div class="info-row"><span class="info-label">Focus</span><span class="info-value">Aerospace · Robotics · CFD/FEA</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="bio-skills-section">
+    <div class="skill-block">
+      <div class="skill-block-label">Simulation</div>
+      <div class="skill-block-title">CFD &amp; FEA</div>
+      <p>ANSYS Fluent applied to real aerospace programs — from drag minimization on solar vehicles to thermal extremes in space environments.</p>
+    </div>
+    <div class="skill-block">
+      <div class="skill-block-label">Design &amp; Systems</div>
+      <div class="skill-block-title">Aerospace Systems</div>
+      <p>Operations center design, capsule engineering for NASA-affiliated programs — bridging simulation and real-world deployment.</p>
+    </div>
+    <div class="skill-block">
+      <div class="skill-block-label">Robotics &amp; Autonomy</div>
+      <div class="skill-block-title">Mechanisms &amp; Vision</div>
+      <p>Pneumatic actuators, animatronics, multi-axis robotic systems, and computer vision pipelines for human detection and sensor-reactive behavior.</p>
+    </div>
+  </div>
+  <footer><span>© 2025 Enrico Luis Moreno</span><span>Mechanical Engineer · Aerospace &amp; Robotics</span></footer>
+</section>
+
+<!-- ══ AEROSPACE LIST ══ -->
+<section id="aerospace" class="page">
+  <div class="proj-header">
+    <div>
+      <div class="proj-eyebrow">Portfolio</div>
+      <h2 class="proj-title">Aerospace <strong>Projects</strong></h2>
+    </div>
+  </div>
+  <div class="project-list">
+
+    <div class="project-card" onclick="showDetail('aero1','aerospace')">
+      <div class="card-img">
+        <!-- <img src="images/aero1.jpg" alt="MOC"> -->
+        <div class="card-img-ph"><span class="ph-icon">🛩️</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">01 — Aerospace · NASA NCAS</div>
+        <h3 class="card-title">Mobile Operations Center — NASA NCAS eVTOL</h3>
+        <p class="card-desc">Designed a mobile operations center supporting a sufficient eVTOL environment within disaster simulations for the NASA NCAS program.</p>
+        <div class="card-tags">
+          <span class="tag blue">NASA NCAS</span><span class="tag blue">eVTOL</span>
+          <span class="tag">Systems Design</span><span class="tag">Disaster Sim</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+    <div class="project-card reverse" onclick="showDetail('aero2','aerospace')">
+      <div class="card-img">
+        <!-- <img src="images/aero2.jpg" alt="Cal Sol"> -->
+        <div class="card-img-ph"><span class="ph-icon">☀️</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">02 — Aerospace · UC Berkeley Cal Sol</div>
+        <h3 class="card-title">CFD Aerodynamics — Cal Sol Gen 11</h3>
+        <p class="card-desc">Ran CFD simulations in ANSYS Fluent to minimize the coefficient of drag and optimize lift for UC Berkeley's Cal Sol Gen 11 solar vehicle.</p>
+        <div class="card-tags">
+          <span class="tag blue">ANSYS Fluent</span><span class="tag blue">CFD</span>
+          <span class="tag">Drag Reduction</span><span class="tag">Solar Vehicle</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="showDetail('aero3','aerospace')">
+      <div class="card-img">
+        <!-- <img src="images/aero3.jpg" alt="Tardigrade"> -->
+        <div class="card-img-ph"><span class="ph-icon">🛰️</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">03 — Aerospace · Space Biology</div>
+        <h3 class="card-title">Tardigrade Capsule for Extreme Space Environments</h3>
+        <p class="card-desc">Helped design a tardigrade capsule for space experimentation, engineered to withstand extreme environments including radiation and temperature fluctuations.</p>
+        <div class="card-tags">
+          <span class="tag blue">Space Systems</span><span class="tag blue">Thermal Design</span>
+          <span class="tag">Radiation</span><span class="tag">Bio Payload</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+  </div>
+  <footer><span>© 2025 Enrico Luis Moreno</span><span>Mechanical Engineer · Aerospace &amp; Robotics</span></footer>
+</section>
+
+<!-- ══ ROBOTICS LIST ══ -->
+<section id="robotics" class="page">
+  <div class="proj-header">
+    <div>
+      <div class="proj-eyebrow">Portfolio</div>
+      <h2 class="proj-title">Robotics <strong>Projects</strong></h2>
+    </div>
+  </div>
+  <div class="project-list">
+
+    <div class="project-card" onclick="showDetail('bot1','robotics')">
+      <div class="card-img">
+        <!-- <img src="images/bot1.jpg" alt="Battlebot"> -->
+        <div class="card-img-ph"><span class="ph-icon">🥊</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">01 — Robotics · Combat</div>
+        <h3 class="card-title">1lb Pneumatic Flipper Battlebot</h3>
+        <p class="card-desc">Built a 1 lb pneumatic robotic flipper battlebot from scratch, winning 2 competitive matches. Designed the pneumatic actuation system and chassis for maximum impact resistance.</p>
+        <div class="card-tags">
+          <span class="tag blue">Pneumatics</span><span class="tag blue">Combat Robotics</span>
+          <span class="tag">Mechanical Design</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+    <div class="project-card reverse" onclick="showDetail('bot2','robotics')">
+      <div class="card-img">
+        <!-- <img src="images/bot2.jpg" alt="Robotic Lamp"> -->
+        <div class="card-img-ph"><span class="ph-icon">💡</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">02 — Robotics · Interactive</div>
+        <h3 class="card-title">5-Axis Sensor-Reactive Robotic Lamp</h3>
+        <p class="card-desc">Created a robotic lamp with 5 axes of movement that reacts dynamically to environmental sensors including motion detection.</p>
+        <div class="card-tags">
+          <span class="tag blue">5-DOF</span><span class="tag blue">Sensors</span>
+          <span class="tag">Servo Control</span><span class="tag">Arduino</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+    <div class="project-card" onclick="showDetail('bot3','robotics')">
+      <div class="card-img">
+        <!-- <img src="images/bot3.jpg" alt="FNAF Head"> -->
+        <div class="card-img-ph"><span class="ph-icon">🐻</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">03 — Robotics · Animatronics</div>
+        <h3 class="card-title">Animatronic FNAF Head with Motorized Eyes</h3>
+        <p class="card-desc">Built an animatronic Five Nights at Freddy's head featuring motorized eyes operable both automatically and via manual control.</p>
+        <div class="card-tags">
+          <span class="tag blue">Animatronics</span><span class="tag blue">Servo Systems</span>
+          <span class="tag">3D Fabrication</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+    <div class="project-card reverse" onclick="showDetail('bot4','robotics')">
+      <div class="card-img">
+        <!-- <img src="images/bot4.jpg" alt="Human Detection"> -->
+        <div class="card-img-ph"><span class="ph-icon">👁️</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">04 — Robotics · Computer Vision</div>
+        <h3 class="card-title">Human Detection &amp; Localization Software</h3>
+        <p class="card-desc">Developed software to identify and locate human beings through a live camera feed using computer vision techniques for real-time detection and spatial localization.</p>
+        <div class="card-tags">
+          <span class="tag blue">Computer Vision</span><span class="tag blue">Python</span>
+          <span class="tag">OpenCV</span><span class="tag">Object Detection</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+  </div>
+  <footer><span>© 2025 Enrico Luis Moreno</span><span>Mechanical Engineer · Aerospace &amp; Robotics</span></footer>
+</section>
+
+<!-- ══ MISC LIST ══ -->
+<section id="misc" class="page">
+  <div class="proj-header">
+    <div>
+      <div class="proj-eyebrow">Portfolio</div>
+      <h2 class="proj-title">Miscellaneous <strong>Projects</strong></h2>
+    </div>
+  </div>
+  <div class="project-list">
+
+    <div class="project-card" onclick="showDetail('misc1','misc')">
+      <div class="card-img">
+        <!-- <img src="images/misc1.jpg" alt="R/V Kilo Moana"> -->
+        <div class="card-img-ph"><span class="ph-icon">🌊</span><span class="ph-text">Project Image</span></div>
+      </div>
+      <div class="card-body">
+        <div class="card-label">01 — Misc · Oceanography</div>
+        <h3 class="card-title">R/V Kilo Moana — Oceanographic Research Expedition</h3>
+        <p class="card-desc">Worked aboard the R/V Kilo Moana alongside Ph.D. researchers, deploying CTD scanners and leading a student-led shipwreck mapping project near Hawaii using overnight sonar surveys.</p>
+        <div class="card-tags">
+          <span class="tag blue">Oceanography</span><span class="tag blue">CTD Instruments</span>
+          <span class="tag">Sonar Mapping</span><span class="tag">Field Research</span>
+        </div>
+        <div class="card-cta">View Project →</div>
+      </div>
+    </div>
+
+  </div>
+  <footer><span>© 2025 Enrico Luis Moreno</span><span>Mechanical Engineer · Aerospace &amp; Robotics</span></footer>
+</section>
+
+<!-- ══ PROJECT DETAIL (populated by JS) ══ -->
+<section id="detail" class="page">
+  <div class="detail-back" id="detail-back-btn">← Back to Projects</div>
+  <div class="detail-hero">
+    <div class="detail-hero-left">
+      <div class="detail-category" id="d-category"></div>
+      <h1 class="detail-title" id="d-title"></h1>
+      <p class="detail-body" id="d-body"></p>
+      <div class="detail-tags" id="d-tags"></div>
+    </div>
+    <div class="detail-hero-right" id="d-meta"></div>
+  </div>
+  <div class="carousel-section">
+    <div class="carousel-label">Project Images</div>
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="carousel-track"></div>
+      <button class="carousel-btn carousel-prev" onclick="carouselMove(-1)">&#8592;</button>
+      <button class="carousel-btn carousel-next" onclick="carouselMove(1)">&#8594;</button>
+    </div>
+    <div class="carousel-dots" id="carousel-dots"></div>
+    <div class="add-image-hint">
+      <strong>To add Enrico Luis  photos:</strong> Find this project's entry in the <code>PROJECTS</code> object in the HTML file and add Enrico Luis  image file paths to the <code>images</code> array. Example: <code>images: ['images/photo1.jpg', 'images/photo2.jpg']</code>
+    </div>
+  </div>
+  <footer><span>© 2025 Enrico Luis Moreno</span><span>Mechanical Engineer · Aerospace &amp; Robotics</span></footer>
+</section>
+
+<!-- ══ CONTACT ══ -->
+<section id="contact" class="page">
+  <div class="contact-layout">
+    <div class="contact-left">
+      <div class="contact-left-eyebrow">Contact</div>
+      <h2 class="contact-left-title">Let's <strong>Connect</strong></h2>
+      <div class="contact-detail">
+        <div class="contact-detail-label">Email</div>
+        <div class="contact-detail-value"><a href="mailto:you@example.com">you@example.com</a></div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-label">LinkedIn</div>
+        <div class="contact-detail-value"><a href="#">www.linkedin.com/in/enrico-luis-moreno-a31b3a271</a></div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-label">GitHub</div>
+        <div class="contact-detail-value"><a href="#">https://github.com/U1tracyn</a></div>
+      </div>
+      <div class="contact-detail">
+        <div class="contact-detail-label">Location</div>
+        <div class="contact-detail-value">Hayward, California</div>
+      </div>
+    </div>
+    <div class="contact-right">
+      <p class="form-title">Send me a message and I'll get back to you within 48 hours.</p>
+      <div class="form-grid">
+        <div class="form-row">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-input" placeholder="Jane">
+        </div>
+        <div class="form-row">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-input" placeholder="Doe">
+        </div>
+        <div class="form-row full">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="jane@example.com">
+        </div>
+        <div class="form-row full">
+          <label class="form-label">Subject</label>
+          <input type="text" class="form-input" placeholder="Project inquiry, collaboration, etc.">
+        </div>
+        <div class="form-row full">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Tell me about Enrico Luis  project or inquiry..."></textarea>
+        </div>
+      </div>
+      <button class="form-submit">Send Message →</button>
+    </div>
+  </div>
+  <footer><span>© 2025 Enrico Luis Moreno</span><span>Mechanical Engineer · Aerospace &amp; Robotics</span></footer>
+</section>
+
+<script>
+// ═══════════════════════════════════════
+// PROJECT DATA
+// To add images: put file paths in the images array.
+// Example: images: ['images/photo1.jpg', 'images/photo2.jpg']
+// ═══════════════════════════════════════
+const PROJECTS = {
+  aero1: {
+    category: 'Aerospace · NASA NCAS Program',
+    title: 'Mobile Operations Center — <strong>NASA NCAS eVTOL</strong>',
+    body: `Designed and developed a Mobile Operations Center (MOC) to support an efficient eVTOL (electric Vertical Take-Off and Landing) environment within disaster simulations as part of the NASA NCAS (National Community College Aerospace Scholars) program.\n\nThe project focused on operational workflow design, communication systems layout, and environmental considerations for deploying eVTOL aircraft effectively in emergency response scenarios. The MOC was designed to serve as a command hub capable of coordinating aerial assets during simulated large-scale disaster events.`,
+    tags: ['NASA NCAS', 'eVTOL', 'Systems Design', 'Disaster Simulation', 'Operations Planning'],
+    meta: [
+      { label: 'Program', value: 'NASA NCAS' },
+      { label: 'Domain', value: 'Aerospace Operations' },
+      { label: 'Key Focus', value: 'eVTOL deployment, operational planning' },
+    ],
+    images: ['images/NCAS_1.jpg', 'images/NCAS_2.jpg','images/NCAS_3.jpg','images/NCAS_4.jpg','images/NCAS_5.jpg','images/NCAS_6.jpg']
+  },
+  aero2: {
+    category: 'Aerospace · UC Berkeley Cal Sol',
+    title: 'CFD Aerodynamics — <strong>Cal Sol Gen 11</strong>',
+    body: `Performed computational fluid dynamics (CFD) simulations using ANSYS Fluent to minimize the coefficient of drag (Cd) and optimize the coefficient of lift (Cl) for UC Berkeley's Cal Sol Gen 11 solar racing vehicle.\n\nIterative simulation runs were used to evaluate body geometry, surface treatments, and underbody airflow. Results were fed back into the design loop to refine the vehicle's aerodynamic profile and maximize efficiency across a range of operating speeds for competitive solar racing.`,
+    tags: ['ANSYS Fluent', 'CFD', 'Drag Reduction', 'Lift Optimization', 'Solar Vehicle', 'UC Berkeley'],
+    meta: [
+      { label: 'Team', value: 'UC Berkeley Cal Sol' },
+      { label: 'Vehicle', value: 'Gen 11 Solar Racer' },
+      { label: 'Tools', value: 'ANSYS Fluent' },
+      { label: 'Goals', value: 'Minimize Cd, optimize Cl' },
+    ],
+    images: ['images/CalSol_1.png', 'images/CalSol_2.png','images/CalSol_3.png','images/CalSol_4.jpg']
+  },
+  aero3: {
+    category: 'Aerospace · Space Biology',
+    title: 'Tardigrade Capsule for <strong>Extreme Space Environments</strong>',
+    body: `Contributed to the design of a tardigrade capsule intended for experimentation in space. The capsule was engineered to withstand extreme conditions of the space environment, including high radiation levels and dramatic temperature fluctuations.\n\nThe project involved material selection for radiation shielding, thermal management analysis to maintain viable conditions for the biological payload, and structural design to ensure capsule integrity through launch and on-orbit conditions.`,
+    tags: ['Space Systems', 'Thermal Design', 'Radiation Shielding', 'Bio Payload', 'Capsule Engineering'],
+    meta: [
+      { label: 'Domain', value: 'Space Biology' },
+      { label: 'Payload', value: 'Tardigrade biological sample' },
+      { label: 'Challenges', value: 'Radiation, thermal extremes' },
+    ],
+    images: ['images/Tartigrade_1.jpg', 'images/Tartigrade_2.jpg','images/Tartigrade_3.jpg']
+  },
+  bot1: {
+    category: 'Robotics · Combat Robotics',
+    title: '1lb Pneumatic <strong>Flipper Battlebot</strong>',
+    body: `Designed and built a 1 lb class pneumatic robotic flipper battlebot from the ground up, competing in organized combat robotics events and winning 2 matches.\n\nThe robot's core mechanism is a pneumatically actuated flipper capable of launching opponents. Design work included the pneumatic circuit (valve, reservoir, actuator sizing), chassis geometry for low center of mass and flip resistance, and material selection for weight compliance while maintaining structural integrity under repeated impacts.`,
+    tags: ['Pneumatics', 'Combat Robotics', 'Mechanical Design', 'Actuator Sizing', '1lb Class'],
+    meta: [
+      { label: 'Weight Class', value: '1 lb antweight' },
+      { label: 'Result', value: '2 match wins' },
+      { label: 'Mechanism', value: 'Pneumatic flipper' },
+    ],
+    images: ['images/1lb_1.jpg', 'images/1lb_2.jpg','images/1lb_3.png','video:images/1lb_4.mp4']
+  },
+  bot2: {
+    category: 'Robotics · Interactive Systems',
+    title: '5-Axis <strong>Sensor-Reactive Robotic Lamp</strong>',
+    body: `Created a robotic lamp featuring 5 axes of movement that dynamically reacts to environmental sensors including motion detection. The lamp responds in real time to stimuli in its environment, creating an interactive and expressive mechanical behavior.\n\nThe project involved designing the multi-axis joint linkages, selecting and programming servo motors for smooth responsive motion, and integrating sensor inputs into a control system that maps detected stimuli to specific movement routines.`,
+    tags: ['5-DOF Kinematics', 'Sensor Integration', 'Servo Control', 'Arduino', 'Interactive Robotics'],
+    meta: [
+      { label: 'Degrees of Freedom', value: '5 axes' },
+      { label: 'Sensors', value: 'Motion, proximity' },
+      { label: 'Control', value: 'Arduino, servo drivers' },
+    ],
+    images: []
+  },
+  bot3: {
+    category: 'Robotics · Animatronics',
+    title: 'Animatronic FNAF Head with <strong>Motorized Eyes</strong>',
+    body: `Built an animatronic Five Nights at Freddy's (FNAF) character head featuring motorized eyes that operate both automatically and under manual control. The project combined mechanical design, servo integration, and custom fabrication to create a convincing and interactive animatronic system.\n\nThe eye mechanism was engineered for smooth, realistic motion with both pre-programmed sequences and real-time manual override capability. The head structure was custom fabricated to house the servo mechanisms while maintaining the character's visual proportions.`,
+    tags: ['Animatronics', 'Servo Systems', 'Manual + Auto Control', '3D Fabrication', 'Mechanical Linkages'],
+    meta: [
+      { label: 'Type', value: 'Animatronic character head' },
+      { label: 'Feature', value: 'Dual-mode motorized eyes' },
+      { label: 'Modes', value: 'Automatic + manual override' },
+    ],
+    images: ['images/FNAF_1.png', 'video:images/FNAF_2.mp4','video:images/FNAF_3.mp4','images/FNAF_4.png']
+  },
+  bot4: {
+    category: 'Robotics · Computer Vision',
+    title: 'Human Detection &amp; <strong>Localization Software</strong>',
+    body: `Developed software to identify and locate human beings through a live camera feed, applying computer vision and machine learning techniques for real-time detection and spatial localization.\n\nThe system processes video input, runs a detection pipeline to identify human figures, and outputs localization data (bounding box, position) that can drive robotic responses or tracking systems. The project covered model selection, inference speed optimization, and integration with hardware interfaces.`,
+    tags: ['Computer Vision', 'Python', 'Object Detection', 'OpenCV', 'Human Tracking', 'ML Inference'],
+    meta: [
+      { label: 'Language', value: 'Python' },
+      { label: 'Libraries', value: 'OpenCV, detection models' },
+      { label: 'Output', value: 'Real-time localization data' },
+    ],
+    images: []
+  },
+  misc1: {
+    category: 'Misc · Oceanographic Research',
+    title: 'R/V Kilo Moana — <strong>Oceanographic Research Expedition</strong>',
+    body: `Worked aboard the R/V Kilo Moana alongside Ph.D. oceanographic researchers to collect and analyze real-time oceanographic data. Gained hands-on experience deploying and operating oceanographic instruments, including CTD (Conductivity, Temperature, Depth) scanners, to gather water column data for scientific research.\n\nCollaborated with peers to develop and execute a student-led shipwreck mapping project near Hawaii, including planning navigation routes and conducting overnight sonar surveys to map the seafloor and locate wreck features.`,
+    tags: ['Oceanography', 'CTD Instruments', 'Sonar Mapping', 'Field Research', 'R/V Kilo Moana', 'Hawaii'],
+    meta: [
+      { label: 'Vessel', value: 'R/V Kilo Moana' },
+      { label: 'Location', value: 'Hawaii' },
+      { label: 'Instruments', value: 'CTD scanners, sonar arrays' },
+      { label: 'Student Project', value: 'Shipwreck mapping survey' },
+    ],
+    images: []
+  }
+};
+
+// ── STATE ──
+let carouselIndex = 0;
+let carouselTotal = 0;
+
+// ── PAGE NAVIGATION ──
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ── SHOW PROJECT DETAIL ──
+function showDetail(projectId, backPage) {
+  const p = PROJECTS[projectId];
+  if (!p) return;
+
+  // Populate header
+  document.getElementById('d-category').textContent = p.category;
+  document.getElementById('d-title').innerHTML = p.title;
+  document.getElementById('d-body').innerHTML = p.body.replace(/\n\n/g, '<br><br>');
+
+  // Tags
+  document.getElementById('d-tags').innerHTML = p.tags
+    .map(t => `<span class="tag blue">${t}</span>`).join('');
+
+  // Meta sidebar
+  document.getElementById('d-meta').innerHTML = p.meta
+    .map(m => `<div class="detail-meta-block">
+      <div class="detail-meta-label">${m.label}</div>
+      <div class="detail-meta-value">${m.value}</div>
+    </div>`).join('');
+
+  // Carousel
+  buildCarousel(p.images);
+
+  // Back button goes to correct list page
+  document.getElementById('detail-back-btn').onclick = () => showPage(backPage);
+
+  showPage('detail');
+  // Keep the correct nav tab highlighted
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + backPage);
+  if (navEl) navEl.classList.add('active');
+}
+
+// ── CAROUSEL ──
+function buildCarousel(images) {
+  carouselIndex = 0;
+  // Show 3 placeholder slides if no images provided
+  const slides = images && images.length > 0 ? images : ['', '', ''];
+  carouselTotal = slides.length;
+
+  document.getElementById('carousel-track').innerHTML = slides.map((src, i) => {
+      if (src) {
+        if (src.startsWith('video:')) {
+          const videoSrc = src.replace('video:', '');
+          return `<div class="carousel-slide">
+            <video controls style="width:100%;height:100%;object-fit:contain;background:#000;">
+              <source src="${videoSrc}">
+            </video>
+          </div>`;
+        }
+        return `<div class="carousel-slide"><img src="${src}" alt="Project photo ${i+1}" loading="lazy"></div>`;
+      }
+    return `<div class="carousel-slide"><div class="carousel-slide-ph">
+      <span class="cph-icon">📷</span>
+      <span class="cph-num">Photo ${i + 1}</span>
+      <span class="cph-text">Add image path in HTML</span>
+    </div></div>`;
+  }).join('');
+
+  document.getElementById('carousel-dots').innerHTML = slides
+    .map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" onclick="carouselGoTo(${i})"></div>`)
+    .join('');
+
+  updateCarousel();
+}
+
+function carouselMove(dir) {
+  carouselIndex = (carouselIndex + dir + carouselTotal) % carouselTotal;
+  updateCarousel();
+}
+
+function carouselGoTo(idx) {
+  carouselIndex = idx;
+  updateCarousel();
+}
+
+function updateCarousel() {
+  document.getElementById('carousel-track').style.transform = `translateX(-${carouselIndex * 100}%)`;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === carouselIndex));
+}
+
+// Keyboard arrow navigation for carousel
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('detail').classList.contains('active')) return;
+  if (e.key === 'ArrowLeft') carouselMove(-1);
+  if (e.key === 'ArrowRight') carouselMove(1);
+});
+</script>
+</body>
+</html>
